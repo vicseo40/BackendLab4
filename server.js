@@ -23,11 +23,23 @@ app.post('/identify', (req,res) => {
 })
 
 app.get('/identify', (req, res) => {
-    res.render('identify.ejs')
+    res.render('lab4/identify.ejs')
 })
 
-app.get('/granted', (req,res) => {
-    res.render("start.ejs")
+function authenticateToken(req,res,next){
+    console.log("We are in the authentication control function")
+    if(currentKey == ""){
+        res.redirect("/identify")
+    }else if(jwt.verify(currentKey,process.env.ACCESS_TOKEN_SECRET)){
+        next()
+    }else{
+        res.redirect("/identify")
+    }
+    
+}
+
+app.get('/granted', authenticateToken, (req,res) => {
+    res.render("lab4/start.ejs")
 })
 
 app.listen(8000)
