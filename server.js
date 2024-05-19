@@ -7,6 +7,10 @@ app.set('view-engine', 'ejs')
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 
+
+
+
+/*
 var currentKey = ""
 var currentPassword= ""
 
@@ -43,3 +47,4 @@ app.get('/granted', authenticateToken, (req,res) => {
 })
 
 app.listen(8000)
+*/
