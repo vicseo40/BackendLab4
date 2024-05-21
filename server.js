@@ -3,7 +3,7 @@ const app = express()
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 require('dotenv').config()
-const { initializeDatabase, getUserById, getAllUsers } = require('./database')
+const { db, initializeDatabase, getUserById, getAllUsers } = require('./database')
 
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
@@ -104,11 +104,11 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
     const { userID, name, password, role } = req.body
 
-    if (role !== 'student' && role !== 'teacher') {
+    if (role == 'admin') {
         return res.status(400).send("Not a valid role")
     }
 
-    const hashedPassword = bcrypt.hashSync(password, 10) 
+    const hashedPassword = bcrypt.hashSync(password, 10)
 
     db.run('INSERT INTO Users (userID, role, name, password) VALUES (?, ?, ?, ?)', [userID, role, name, hashedPassword], (err) => {
         if (err) {
@@ -131,7 +131,7 @@ app.get('/users/:userId', authenticateToken, (req, res) => {
         if (err || !user) {
             return res.status(404).send("User not found")
         }
-        res.render('profile.ejs', { user: user })
+        res.render('lab4/profile.ejs', { user: user })
     })
 })
 

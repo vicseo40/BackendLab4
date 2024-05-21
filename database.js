@@ -42,6 +42,7 @@ function getAllUsers(callback) {
 }
 
 module.exports = {
+    db,
     initializeDatabase,
     getUserById,
     getAllUsers
