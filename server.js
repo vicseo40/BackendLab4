@@ -3,7 +3,7 @@ const app = express()
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 require('dotenv').config()
-const { initializeDatabase, getUserById } = require('./database')
+const { initializeDatabase, getUserById, getAllUsers } = require('./database')
 
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }))
