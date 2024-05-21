@@ -1,5 +1,11 @@
 const sqlite3 = require('sqlite3').verbose()
 const bcrypt = require('bcrypt')
+const fs = require('fs')
+
+if (fs.existsSync('users.db')) {
+    fs.unlinkSync('users.db')
+}
+
 const db = new sqlite3.Database('users.db')
 
 function initializeDatabase() {
@@ -9,11 +15,11 @@ function initializeDatabase() {
         const stmt = db.prepare('INSERT INTO Users (userID, role, name, password) VALUES (?, ?, ?, ?)')
         
         const users = [
-            { userID: 'id1', role: 'student', name: 'user1', password: 'password' },
-            { userID: 'id2', role: 'student', name: 'user2', password: 'password2' },
+            { userID: 'id1', role: 'student1', name: 'user1', password: 'password' },
+            { userID: 'id2', role: 'student2', name: 'user2', password: 'password2' },
             { userID: 'id3', role: 'teacher', name: 'user3', password: 'password3' },
             { userID: 'admin', role: 'admin', name: 'admin', password: 'admin' }
-        ];
+        ]
 
         users.forEach(user => {
             stmt.run(user.userID, user.role, user.name, bcrypt.hashSync(user.password, 10))

@@ -61,7 +61,7 @@ app.get('/admin', authenticateToken, (req, res) => {
         if (err) {
             return res.status(500).send("Server error")
         }
-        res.render('admin.ejs', { users: users })
+        res.render('lab4/admin.ejs', { users: users })
     })
 })
 
@@ -70,7 +70,7 @@ app.get('/student1', authenticateToken, (req, res) => {
     if (req.user.role !== 'student1' && req.user.role !== 'teacher' && req.user.role !== 'admin') {
         return res.status(403).redirect('/identify')
     }
-    res.render('student1.ejs')
+    res.render('lab4/student1.ejs')
 })
 
 // Route for student2
@@ -78,7 +78,7 @@ app.get('/student2', authenticateToken, (req, res) => {
     if (req.user.role !== 'student2' && req.user.role !== 'teacher' && req.user.role !== 'admin') {
         return res.status(403).redirect('/identify')
     }
-    res.render('student2.ejs')
+    res.render('lab4/student2.ejs')
 })
 
 // Route for teacher
@@ -86,7 +86,7 @@ app.get('/teacher', authenticateToken, (req, res) => {
     if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
         return res.status(403).redirect('/identify')
     }
-    res.render('teacher.ejs')
+    res.render('lab4/teacher.ejs')
 })
 
 
