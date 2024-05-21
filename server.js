@@ -37,7 +37,7 @@ app.post('/identify', (req, res) => {
             return res.status(500).send("Server error")
         }
         if (!user || !bcrypt.compareSync(password, user.password)) {
-            return res.status(401).send("Invalid credentials")
+            return res.status(401).send("Unauthorized: Invalid credentials")
         }
 
         const token = jwt.sign({ userID: user.userID, role: user.role }, process.env.ACCESS_TOKEN_SECRET)
@@ -89,11 +89,50 @@ app.get('/teacher', authenticateToken, (req, res) => {
     res.render('lab4/teacher.ejs')
 })
 
-
-// Logout if I want
+// Logout route if I want
 app.get('/logout', (req, res) => {
     currentKey = ""
     res.redirect('/identify')
+})
+
+//Registration route
+app.get('/register', (req, res) => {
+    res.render('lab4/register.ejs')
+})
+
+// Registration Post
+app.post('/register', (req, res) => {
+    const { userID, name, password, role } = req.body
+
+    if (role !== 'student' && role !== 'teacher') {
+        return res.status(400).send("Not a valid role")
+    }
+
+    const hashedPassword = bcrypt.hashSync(password, 10) 
+
+    db.run('INSERT INTO Users (userID, role, name, password) VALUES (?, ?, ?, ?)', [userID, role, name, hashedPassword], (err) => {
+        if (err) {
+            return res.status(500).send("Error registering user")
+        }
+        res.redirect('/identify')
+    })
+})
+
+
+// Dynamic user profile route
+app.get('/users/:userId', authenticateToken, (req, res) => {
+    const { userId } = req.params
+
+    if (req.user.userID !== userId) {
+        return res.status(403).send("Access denied")
+    }
+
+    getUserById(userId, (err, user) => {
+        if (err || !user) {
+            return res.status(404).send("User not found")
+        }
+        res.render('profile.ejs', { user: user })
+    })
 })
 
 // Authenticaiton using jwt
