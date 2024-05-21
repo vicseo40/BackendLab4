@@ -17,10 +17,18 @@ var currentPassword = ""
 // Initialize the db
 initializeDatabase()
 
+// Default route is identify
 app.get('/', (req, res) => {
     res.redirect("/identify")
 })
 
+// Route for identify
+app.get('/identify', (req, res) => {
+    res.render('lab4/identify.ejs')
+})
+
+
+// Route for the identify post
 app.post('/identify', (req, res) => {
     const { userID, password } = req.body
 
@@ -39,26 +47,56 @@ app.post('/identify', (req, res) => {
     })
 })
 
-app.get('/identify', (req, res) => {
-    res.render('lab4/identify.ejs')
-})
-
+// Route for start
 app.get('/start', authenticateToken, (req, res) => {
     res.render('lab4/start.ejs')
 })
 
+// Route for admin
 app.get('/admin', authenticateToken, (req, res) => {
     if (req.user.role !== 'admin') {
         return res.status(403).redirect('/identify')
     }
-    res.render('lab4/admin.ejs')
+    getAllUsers((err, users) => {
+        if (err) {
+            return res.status(500).send("Server error")
+        }
+        res.render('admin.ejs', { users: users })
+    })
 })
 
-app.get('/granted', authenticateToken, (req, res) => {
-    res.render("lab4/start.ejs")
+// Route for student1
+app.get('/student1', authenticateToken, (req, res) => {
+    if (req.user.role !== 'student1' && req.user.role !== 'teacher' && req.user.role !== 'admin') {
+        return res.status(403).redirect('/identify')
+    }
+    res.render('student1.ejs')
+})
+
+// Route for student2
+app.get('/student2', authenticateToken, (req, res) => {
+    if (req.user.role !== 'student2' && req.user.role !== 'teacher' && req.user.role !== 'admin') {
+        return res.status(403).redirect('/identify')
+    }
+    res.render('student2.ejs')
+})
+
+// Route for teacher
+app.get('/teacher', authenticateToken, (req, res) => {
+    if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
+        return res.status(403).redirect('/identify')
+    }
+    res.render('teacher.ejs')
 })
 
 
+// Logout if I want
+app.get('/logout', (req, res) => {
+    currentKey = ""
+    res.redirect('/identify')
+})
+
+// Authenticaiton using jwt
 function authenticateToken(req, res, next) {
     if (!currentKey) {
         return res.redirect("/identify")
@@ -73,6 +111,10 @@ function authenticateToken(req, res, next) {
     }
 }
 
+//From pre-task
+app.get('/granted', authenticateToken, (req, res) => {
+    res.render("lab4/start.ejs")
+})
 
 
 /*
